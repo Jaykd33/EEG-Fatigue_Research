@@ -1,3 +1,5 @@
+## Research Gap from SEED VIG experiment
+
 ### 1)Cross-Subject Generalization
 - The gap is well documented in existing EEG fatigue detection literature.
 - The SEED-VIG dataset supports meaningful Leave-One-Subject-Out (LOSO) evaluation with data from 23 subjects.
