@@ -233,10 +233,323 @@ Conclusions
 
 ☑ Obtained a mean subject-wise accuracy of 39.38% ± 23.24%, indicating substantial inter-subject performance variability.
 
-
-
 ☑ The model achieved the highest recall for the Tired class, while Awake and Drowsy were more difficult to distinguish.
 
 ☑ All prediction sequences have been successfully generated and are ready for temporal consistency evaluation.
 
+# Stage 2
+
+## Block 2.1 – Temporal Metric Definition
+What this block does?
+
+☑ Defines the temporal inconsistency metrics used to evaluate prediction sequences.
+
+☑ Computes Reversal Rate (RR), Temporal Deviation Score (TDS), Trajectory Correlation (TC), and Safety-Critical Reversal Count (SCRC).
+
+☑ Computes corresponding ground-truth metrics for comparison.
+
+☑ Validates the implementation using synthetic monotonic and non-monotonic sequences.
+
+Conclusions
+
+☑ Successfully implemented the temporal consistency evaluation framework.
+
+☑ Sanity checks confirmed that monotonic sequences produce minimal temporal inconsistency, while fluctuating sequences produce higher inconsistency.
+
+☑ The metric implementation behaves as expected and is ready for evaluation on BiLSTM prediction sequences.
+
+☑ The same evaluation framework is retained from the MLP baseline, ensuring fair comparison across architectures.
+
+## Block 2.3 – Model vs Ground Truth Temporal Consistency Comparison
+What this block does?
+
+☑ Compares the temporal consistency of BiLSTM prediction sequences against the corresponding ground-truth label sequences.
+
+☑ Evaluates Reversal Rate (RR), Temporal Deviation Score (TDS), and Trajectory Correlation (TC) for both predictions and ground truth.
+
+☑ Performs paired Wilcoxon signed-rank tests to determine whether the model introduces significantly greater temporal inconsistency than the labels.
+
+☑ Computes the average Safety-Critical Reversal Count (SCRC) to quantify potentially unsafe prediction transitions.
+
+Conclusions
+
+☑ The BiLSTM prediction sequences exhibited no statistically significant increase in temporal inconsistency compared with the ground-truth labels across all evaluated 
+metrics.
+
+☑ The average Reversal Rate (0.0065) was slightly lower than that of the ground truth (0.0078), with no significant difference (p = 0.8821).
+
+☑ The BiLSTM achieved a lower Temporal Deviation Score than the ground truth, indicating smoother prediction trajectories.
+
+☑ Trajectory Correlation was slightly lower than the ground truth but the difference was not statistically significant.
+
+☑ The average Safety-Critical Reversal Rate was 0.0038 per timestep, corresponding to approximately one safety-critical prediction reversal per 300-window session.
+
+☑ Unlike the MLP baseline, the BiLSTM did not introduce additional temporal inconsistency beyond the inherent variability of the dataset, suggesting that temporal 
+behavior is influenced by the underlying model architecture rather than being a universal property of EEG fatigue classifiers.
+
+## Block 2.4 – Temporal Prediction Visualization
+What this block does?
+
+☑ Selects the sessions with the highest prediction reversal rates.
+
+☑ Visualizes ground-truth and BiLSTM prediction trajectories over time.
+
+☑ Highlights safety-critical prediction reversals (Drowsy → Awake/Tired).
+
+☑ Displays session-level temporal metrics (Accuracy, RR, TDS, and TC) alongside each trajectory.
+
+☑ Compares prediction and ground-truth reversal rates using bar charts for each selected session.
+
+Conclusions
+
+☑ Successfully generated visual comparisons between ground-truth and BiLSTM prediction sequences.
+
+☑ Identified the sessions exhibiting the highest temporal inconsistency for detailed qualitative analysis.
+
+☑ Enabled direct visual inspection of prediction stability and safety-critical transitions.
+
+☑ The generated figures provide qualitative evidence to complement the quantitative temporal consistency metrics.
+
+## Block 2.5 – Distribution Analysis
+What this block does?
+
+☑ Visualizes the distribution of temporal consistency metrics across all sessions.
+
+☑ Compares the distributions of prediction and ground-truth reversal rates.
+
+☑ Compares the distributions of prediction and ground-truth trajectory correlations.
+
+☑ Examines the relationship between classification accuracy and temporal inconsistency using Spearman correlation analysis.
+
+☑ Generates distribution plots to support qualitative interpretation of the temporal metrics.
+
+Conclusions
+
+☑ Successfully visualized the distribution of temporal consistency metrics across all evaluation sessions.
+
+☑ The prediction and ground-truth reversal rate distributions showed substantial overlap, consistent with the statistical findings from Block 2.3.
+
+☑ No significant correlation was observed between session accuracy and prediction reversal rate (Spearman r = -0.026, p = 0.9050).
+
+☑ These results indicate that classification accuracy and temporal consistency behave as largely independent characteristics of the BiLSTM model.
+
+☑ The distribution analysis supports the observation that the BiLSTM maintains temporal behavior comparable to the ground truth rather than introducing additional temporal inconsistency.
+
+### For the BiLSTM, prediction accuracy and temporal consistency appear largely independent, although the model itself does not exhibit statistically significant excess temporal inconsistency relative to the ground truth.
+
+## Block 2.6 – Save Stage 2 Results
+What this block does?
+
+☑ Saves all computed temporal consistency metrics and statistical comparison results for later use.
+
+☑ Summarizes the key Stage 2 temporal consistency metrics for the BiLSTM model.
+
+☑ Reports the statistical comparison between prediction and ground-truth temporal behavior.
+
+☑ Provides the primary metrics that will be compared across different classifier architectures.
+
+Conclusions
+
+☑ The BiLSTM achieved a mean prediction reversal rate of 0.0065, slightly lower than the ground-truth reversal rate (0.0078).
+
+☑ The Wilcoxon signed-rank test (p = 0.8821) found no significant difference between prediction and ground-truth reversal rates.
+
+☑ The mean trajectory correlation of the BiLSTM (0.0881) was lower than the ground truth (0.2037), although this difference was not statistically significant.
+
+☑ No meaningful relationship was observed between classification accuracy and reversal rate (Spearman r = -0.0264, p = 0.9050).
+
+☑ The average safety-critical reversal rate was 0.0038 per timestep, indicating relatively few unsafe prediction transitions.
+
+☑ Overall, the BiLSTM did not introduce statistically significant temporal inconsistency beyond the inherent variability of the ground-truth labels.
+
+# STAGE 3: SURVIVABILITY TEST
+
+## Block 3.0: Loading Previous Outputs
+What this block does?
+
+☑ Imports the libraries required for Stage 3 temporal post-processing and analysis.
+
+☑ Loads the BiLSTM Stage 2 outputs containing prediction sequences and temporal consistency metrics.
+
+☑ Retrieves the prediction results and session-wise temporal metrics for further evaluation.
+
+☑ Verifies that all sessions are available for post-processing analysis.
+
+Conclusions
+
+☑ Successfully loaded the BiLSTM Stage 2 outputs for survivability testing.
+
+☑ Retrieved prediction sequences and temporal consistency metrics for all 23 recording sessions.
+
+☑ Confirmed that the required data is available for evaluating temporal post-processing methods.
+
+☑ The dataset is ready for Stage 3 analysis to determine whether simple post-processing techniques can meaningfully alter the temporal behavior of BiLSTM predictions.
+
+## Block 3.1 – Install Dependencies & Define Temporal Metrics
+What this block does?
+
+☑ Installs and imports the hmmlearn library required for HMM-based post-processing.
+
+☑ Re-defines the temporal consistency metric functions from Stage 2 to make the Stage 3 notebook self-contained.
+
+☑ Implements the isotonic regression routine used for computing the Temporal Deviation Score (TDS).
+
+☑ Ensures that all post-processed prediction sequences will be evaluated using the same temporal consistency metrics as the original predictions.
+
+
+Conclusions
+
+☑ Successfully installed and imported the required dependencies for Stage 3.
+
+☑ Re-established the temporal consistency evaluation functions without modifying their definitions.
+
+☑ Guaranteed that all post-processing methods will be evaluated using an identical metric framework, ensuring fair comparison with the original BiLSTM predictions.
+
+☑ Stage 3 is fully prepared for evaluating whether naive post-processing methods can meaningfully alter the temporal behavior of the BiLSTM predictions.
+
+## Block 3.2 – Majority Vote Smoothing
+What this block does?
+
+☑ Implements a sliding-window majority vote smoothing algorithm.
+
+☑ Replaces each prediction with the most frequently occurring class within its local temporal neighborhood.
+
+☑ Serves as the simplest baseline for reducing short-term prediction fluctuations.
+
+Conclusions
+
+☑ Successfully implemented the Majority Vote post-processing method.
+
+☑ Provides a simple temporal smoothing baseline for comparison with more advanced post-processing techniques.
+
+☑ Will be evaluated using the same temporal consistency metrics as the original BiLSTM predictions.
+
+## Block 3.3 – Moving Average Smoothing
+What this block does?
+☑ Applies a moving average filter to the prediction sequence.
+
+☑ Converts the smoothed values back into discrete fatigue classes by rounding.
+
+☑ Reduces isolated prediction fluctuations while preserving the overall temporal trend.
+
+Conclusions
+
+☑ Successfully implemented the Moving Average smoothing method.
+
+☑ Provides a continuous-valued smoothing baseline for temporal post-processing.
+
+☑ Enables comparison between statistical smoothing and majority-vote filtering.
+
+#Block 3.4 – HMM Viterbi Decoding
+What this block does?
+
+☑ Implements Hidden Markov Model (HMM) based temporal post-processing using Viterbi decoding.
+
+☑ Models fatigue progression using transition probabilities that favor gradual state changes.
+
+☑ Learns transition and emission probabilities from the prediction sequences before decoding the most likely temporal state sequence.
+
+☑ Provides the strongest sequence-modeling baseline among the evaluated post-processing methods.
+
+Conclusions
+
+☑ Successfully implemented the HMM-based temporal smoothing framework.
+
+☑ Introduced a probabilistic baseline capable of enforcing temporally coherent prediction sequences.
+
+
+☑ Completes the set of three post-processing strategies (Majority Vote, Moving Average, and HMM) for survivability testing.
+
+☑ All post-processing methods are now ready for quantitative evaluation under the identical temporal consistency framework.
+
+## Block 3.5 – Apply Post-processing Methods
+What this block does?
+
+☑ Applies three post-processing methods (Majority Vote, Moving Average, and HMM Viterbi decoding) to every BiLSTM prediction sequence.
+
+☑ Evaluates multiple window sizes (3, 5, and 9) for the Majority Vote and Moving Average methods.
+
+☑ Computes classification accuracy and temporal consistency metrics for every post-processed prediction sequence.
+
+☑ Stores the results for subsequent comparison with the original BiLSTM predictions.
+
+Conclusions
+
+☑ Successfully applied all three post-processing methods to all 23 recording sessions.
+
+☑ Evaluated multiple smoothing configurations for Majority Vote and Moving Average.
+
+☑ Successfully generated post-processed prediction sequences and corresponding temporal consistency metrics.
+
+☑ The Stage 3 evaluation dataset is now prepared for quantitative comparison of post-processing effectiveness.
+
+## Block 3.6 – Survivability Comparison
+What this block does?
+
+☑ Compares the temporal consistency of the original BiLSTM predictions with three post-processing methods.
+
+☑ Evaluates the effect of Majority Vote, Moving Average, and HMM Viterbi decoding on prediction accuracy and temporal consistency.
+
+☑ Quantifies changes in Reversal Rate (RR), Temporal Deviation Score (TDS), Trajectory Correlation (TC), and classification accuracy.
+
+☑ Determines whether simple post-processing can substantially alter the temporal behavior of BiLSTM predictions.
+
+Conclusions
+
+☑ Majority Vote and Moving Average smoothing produced only minor reductions in prediction reversal rate while maintaining essentially unchanged classification accuracy.
+
+☑ The largest reduction in reversal rate (approximately 25%) was achieved using Majority Vote with a window size of 9, although the absolute improvement remained small 
+because the original BiLSTM reversal rate was already low.
+
+☑ Moving Average smoothing produced similarly modest improvements, with negligible changes in classification accuracy.
+
+☑ The HMM-based post-processing substantially degraded both classification accuracy and temporal consistency, indicating that the implemented HMM configuration was not effective for this dataset.
+
+☑ Overall, the BiLSTM prediction sequences were already temporally stable, leaving limited opportunity for further improvement through simple post-processing.
+
+## Block 3.7 – Accuracy–Consistency Comparison
+What this block does?
+
+☑ Visualizes the relationship between classification accuracy and temporal consistency after applying different post-processing methods.
+
+
+☑ Compares the original BiLSTM predictions with Majority Vote, Moving Average, and HMM-based post-processing.
+
+☑ Examines whether improvements in temporal consistency are associated with reductions in classification accuracy.
+
+☑ Provides a graphical comparison of the effect of post-processing on prediction behavior.
+
+Conclusions
+
+☑ Majority Vote and Moving Average post-processing produced only marginal changes in both temporal consistency and classification accuracy.
+
+☑ No meaningful accuracy–consistency tradeoff was observed for the BiLSTM predictions.
+
+☑ The original BiLSTM predictions already occupied a region of high temporal consistency, leaving limited room for further improvement.
+
+☑ The HMM method substantially reduced classification accuracy without improving temporal consistency, indicating that it was not an effective post-processing strategy 
+under the current implementation.
+
+## Block 3.8 – Final Stage 3 Summary
+What this block does?
+
+☑ Summarizes the effect of post-processing on the temporal behavior of the BiLSTM predictions.
+
+☑ Reports the best post-processing performance achieved across all evaluated methods.
+
+☑ Saves the Stage 3 outputs for future comparison with other classifier architectures.
+
+☑ Provides a concise summary of the principal Stage 3 quantitative results.
+
+Conclusions
+
+☑ The original BiLSTM prediction sequences exhibited a low mean reversal rate (0.0065).
+
+☑ The best post-processing method reduced the reversal rate to 0.0049, corresponding to an improvement of approximately 25%.
+
+☑ Classification accuracy remained essentially unchanged after the best-performing post-processing method.
+
+☑ The HMM-based post-processing substantially degraded both temporal consistency and classification accuracy under the current implementation.
+
+☑ Overall, simple post-processing produced only limited improvements because the BiLSTM prediction sequences were already temporally stable.
 
