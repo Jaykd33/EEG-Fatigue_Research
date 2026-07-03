@@ -1,3 +1,5 @@
+##Simple Conclusion: BiLSTM performs better than MLP and produces very less temporal inconsistencies.
+
 # Stage 0
 
 ## Block 0.1 – Environment Setup & Reproducibility
